@@ -126,7 +126,7 @@ include 'dbconn.php';
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  href="about_portal.php">
+      <a class="nav-link"  href="member_about_portal.php">
         <i class="icon-columns menu-icon"></i>
         <span class="menu-title">About Portal</span>
         

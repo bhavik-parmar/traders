@@ -82,7 +82,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'member') {
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_sidebar.html -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+         <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
      <li class="nav-item">
       <a class="nav-link"  href="member_dashboard.php" >
@@ -113,7 +113,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'member') {
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  href="about_portal.php">
+      <a class="nav-link"  href="member_about_portal.php">
         <i class="icon-columns menu-icon"></i>
         <span class="menu-title">About Portal</span>
         

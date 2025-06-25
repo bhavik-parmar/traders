@@ -68,7 +68,7 @@ $user = mysqli_fetch_assoc($result);
             <li class="nav-item"><a class="nav-link" href="othermembers.php"><i class="icon-layout menu-icon"></i><span class="menu-title">Member Directory</span></a></li>
             <li class="nav-item"><a class="nav-link" href="add_requirement.php"><i class="icon-grid menu-icon"></i><span class="menu-title">Post Request</span></a></li>
             <li class="nav-item"><a class="nav-link" href="my_applications.php"><i class="icon-columns menu-icon"></i><span class="menu-title">My Post</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="about_portal.php"><i class="icon-columns menu-icon"></i><span class="menu-title">About Portal</span></a></li>
+            <li class="nav-item"><a class="nav-link" href="member_about_portal.php"><i class="icon-columns menu-icon"></i><span class="menu-title">About Portal</span></a></li>
             <li class="nav-item"><a class="nav-link" href="profile.php"><i class="icon-head menu-icon"></i><span class="menu-title">My Profile</span></a></li>
           </ul>
         </nav>
@@ -87,17 +87,90 @@ $user = mysqli_fetch_assoc($result);
                           <tr><th>Full Name</th><td><?= htmlspecialchars($user['name']) ?></td></tr>
                           <tr><th>Email</th><td><?= htmlspecialchars($user['email']) ?></td></tr>
                           <tr><th>Phone</th><td><?= htmlspecialchars($user['phone']) ?></td></tr>
-                         
                           <tr><th>Role</th><td><?= htmlspecialchars($user['role']) ?></td></tr>
-                         
                         </table>
                       </div>
+
+                      <!-- Buttons -->
+                      <div class="mt-4">
+                        <button type="button" class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#changePasswordModal">Change Password</button>
+                      </div>
+
                     <?php else: ?>
                       <p>User data not found.</p>
                     <?php endif; ?>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- Edit Profile Modal -->
+          <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <form method="post" action="update_profile.php" class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editProfileLabel">Edit Profile</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="mb-3">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($user['name']) ?>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($user['email']) ?>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="text" class="form-control" value="<?= htmlspecialchars($user['phone']) ?>" readonly>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-success">Save Changes</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Change Password Modal -->
+          <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <form method="post" action="change_password.php" class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="changePasswordLabel">Change Password</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <input type="hidden" name="email" value="<?= htmlspecialchars($user['email']) ?>">
+                  <div class="mb-3">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($user['phone']) ?>" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">Current Password</label>
+                    <input type="password" name="current_password" class="form-control" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label">New Password</label>
+                    <input type="password" name="new_password" id="new_password" class="form-control" onkeyup="checkPasswordStrength()" required>
+                    <div class="mt-2">
+                      <small id="password-strength-text" class="form-text"></small>
+                      <div class="progress">
+                        <div id="password-strength-bar" class="progress-bar" role="progressbar" style="width: 0%"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-success">Change Password</button>
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+              </form>
             </div>
           </div>
 
@@ -118,6 +191,59 @@ $user = mysqli_fetch_assoc($result);
     </div>
 
     <!-- Scripts -->
+    <script>
+function checkPasswordStrength() {
+  const password = document.getElementById("new_password").value;
+  const strengthBar = document.getElementById("password-strength-bar");
+  const strengthText = document.getElementById("password-strength-text");
+  const submitBtn = document.querySelector("#changePasswordModal button[type='submit']");
+
+  let strength = 0;
+
+  if (password.length >= 8) strength++;
+  if (password.match(/[A-Z]/)) strength++;
+  if (password.match(/[0-9]/)) strength++;
+  if (password.match(/[^A-Za-z0-9]/)) strength++;
+
+  let barColor = "";
+  let barWidth = "";
+  let text = "";
+  let allowSubmit = false;
+
+  switch (strength) {
+    case 0:
+    case 1:
+      barColor = "bg-danger";
+      barWidth = "25%";
+      text = "Weak";
+      break;
+    case 2:
+      barColor = "bg-warning";
+      barWidth = "50%";
+      text = "Medium";
+      break;
+    case 3:
+      barColor = "bg-info";
+      barWidth = "75%";
+      text = "Good";
+      break;
+    case 4:
+      barColor = "bg-success";
+      barWidth = "100%";
+      text = "Strong";
+      allowSubmit = true;
+      break;
+  }
+
+  strengthBar.className = "progress-bar " + barColor;
+  strengthBar.style.width = barWidth;
+  strengthText.innerText = "Password Strength: " + text;
+
+  // Disable/Enable submit button based on strength
+  submitBtn.disabled = !allowSubmit;
+}
+</script>
+
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <script src="assets/vendors/chart.js/chart.umd.js"></script>
     <script src="assets/vendors/datatables.net/jquery.dataTables.js"></script>

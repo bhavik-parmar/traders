@@ -1,12 +1,12 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'member') {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sub_admin') {
     header("Location: login_form.php");
     exit;
 }
-include 'dbconn.php';
 ?>
 <!-- Continue with your admin dashboard HTML here -->
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -32,7 +32,6 @@ include 'dbconn.php';
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
     <link rel="shortcut icon" href="assets/images/favicon.png" />
-   
   </head>
   <body>
     <div class="container-scroller">
@@ -84,48 +83,70 @@ include 'dbconn.php';
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_sidebar.html -->
-         <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
      <li class="nav-item">
-      <a class="nav-link"  href="member_dashboard.php" >
-        <i class="icon-layout menu-icon"></i>
+      <a class="nav-link"  href="admin_dashboard.php" >
+      <i class="icon-grid menu-icon"></i>
         <span class="menu-title">Dashboard</span>
         
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  href="othermembers.php" >
-        <i class="icon-layout menu-icon"></i>
+      <a class="nav-link"  href="membership.php" >
+      <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">Add New Member</span>
+        
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  href="members.php" >
+      <i class="icon-grid menu-icon"></i>
         <span class="menu-title">Member Directory</span>
         
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  href="add_requirement.php" >
-        <i class="icon-grid menu-icon"></i>
-        <span class="menu-title">Post Request</span>
+      <a class="nav-link"  href="list_members.php" >
+      <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">List of Member</span>
         
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  href="my_applications.php">
-        <i class="icon-columns menu-icon"></i>
-        <span class="menu-title">My Post</span>
-        
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link"  href="member_about_portal.php">
-        <i class="icon-columns menu-icon"></i>
-        <span class="menu-title">About Portal</span>
+      <a class="nav-link"  href="login_details.php">
+      <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">Login_details</span>
         
       </a>
     </li>
     
     <li class="nav-item">
-      <a class="nav-link"  href="profile.php" >
-        <i class="icon-head menu-icon"></i>
-        <span class="menu-title">My Profile</span>
+      <a class="nav-link"  href="requirements_admin.php" >
+      <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">Approve Buying/selling</span>
+        
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link"  href="User_status.php" >
+      <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">Member Profile Status</span>
+        
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  href="email.php" >
+      <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">Email Management</span>
+        
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link"  href="admin_about_portal.php" >
+        <i class="icon-grid menu-icon"></i>
+        <span class="menu-title">About Portal</span>
         
       </a>
     </li>
@@ -135,83 +156,52 @@ include 'dbconn.php';
         <!-- partial -->
         <div class="main-panel">
           <div class="content-wrapper">
-          <div class="row">
-              <div class="col-md-12 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <p class="card-title">My Applications</p>
-                    <div class="row">
-                      <div class="col-12">
-                        <div class="table-responsive">
-                        <table class="table table-bordered">
-                        <thead>
-  <tr>
-    <th>Date</th>
-    <th>Product</th>
-    <th>Units</th>
-    <th>Message</th>
-    <th>Image</th>
-    <th>Status</th>
-    <th>Action</th>
-  </tr>
-</thead>
-
-  <tbody>
-    <?php
-    $user_id = $_SESSION['user_id'];
-    $query = "SELECT * FROM requirement WHERE user_id = '$user_id' ORDER BY id DESC";
-    $result = mysqli_query($conn, $query);
-
-    if ($result && mysqli_num_rows($result) > 0) {
-      while ($row = mysqli_fetch_assoc($result)) {
-        $imgSrc = !empty($row['img_path']) ? htmlspecialchars($row['img_path']) : 'assets/images/placeholder.png';
-        echo "<tr>
-          <td>" . htmlspecialchars($row['date']) . "</td>
-          <td>" . htmlspecialchars($row['product']) . "</td>
-          <td>" . htmlspecialchars($row['unit']) . "</td>
-          <td>" . nl2br(htmlspecialchars($row['msg'])) . "</td>
-          <td>
-  <a href='javascript:void(0);' class='btn btn-link p-0 text-primary preview-image-btn' data-img='" . $imgSrc . "'>
-    Preview
-  </a>
-</td>
-
-          <td>" . htmlspecialchars($row['status']) . "</td>
-          <td>
-            <a href='edit_application.php?id=" . $row['id'] . "' class='btn btn-sm btn-primary'><i class='mdi mdi-pencil'></i></a>
-            <a href='delete_application.php?id=" . $row['id'] . "' class='btn btn-sm btn-danger' onclick=\"return confirm('Are you sure you want to delete this application?')\"><i class='mdi mdi-delete'></i></a>
-          </td>
-        </tr>";
-      }
-      
-      }
-     else {
-      echo "<tr><td colspan='5'>No applications found.</td></tr>";
-    }
-    ?>
-  </tbody>
-</table>
 
 
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-         <!-- Image Preview Modal -->
-<div class="modal fade" id="imagePreviewModal" tabindex="-1" aria-labelledby="imagePreviewModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-sm">
-    <div class="modal-content">
-      <div class="modal-body text-center">
-        <img id="previewImage" src="" alt="Preview" class="img-fluid rounded" />
+<!-- About Portal Page Content -->
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="card-title text-primary">About the Import-Export Membership Portal</h3>
+          <p class="mt-3">
+            This platform connects importers and exporters from around the world. Members can apply for access, post their buying or selling requirements, view other posts, and connect with other verified users. The platform ensures a safe and collaborative environment for international trade.
+          </p>
+
+          <h4 class="text-info mt-4">User Features</h4>
+          <ul>
+            <li>Apply for membership and wait for admin approval</li>
+            <li>Login securely using provided credentials</li>
+            <li>Post buy/sell requirements and manage them</li>
+            <li>View posts created by others</li>
+            <li>Edit or delete your own posts</li>
+            <li>Browse verified members and view their profiles</li>
+          </ul>
+
+          <h4 class="text-info mt-4">Admin Features</h4>
+          <ul>
+            <li>Login using admin credentials</li>
+            <li>Approve or reject new member applications</li>
+            <li>Approve or reject buy/sell posts</li>
+            <li>View and manage all members and posts</li>
+            <li>Lock or unlock member profiles as required</li>
+            <li>Send bulk emails to registered users</li>
+            <li>Track user login details including IP and location</li>
+          </ul>
+
+          <h4 class="text-info mt-4">Purpose</h4>
+          <p>
+            The portal is designed to make import-export operations smoother and more transparent. It supports digital connectivity, encourages verified trading, and makes business networking easier for all registered members.
+          </p>
+
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-
+            
           <!-- content-wrapper ends -->
           <!-- partial:partials/_footer.html -->
           <footer class="footer">
@@ -228,25 +218,6 @@ include 'dbconn.php';
     </div>
     <!-- container-scroller -->
     <!-- plugins:js -->
-    
-
-    <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.preview-image-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        const imgPath = this.getAttribute('data-img');
-        if (imgPath) {
-          document.getElementById('previewImage').src = imgPath;
-          const previewModal = new bootstrap.Modal(document.getElementById('imagePreviewModal'));
-          previewModal.show();
-        } else {
-          alert('No image available.');
-        }
-      });
-    });
-  });
-</script>
-
     <script src="assets/vendors/js/vendor.bundle.base.js"></script>
     <!-- endinject -->
     <!-- Plugin js for this page -->

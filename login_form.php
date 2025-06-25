@@ -171,7 +171,7 @@
                 <!-- Remember Me & Forgot Password -->
                 <div class="remember-forgot">
                    
-                    <a href="#" class="text-decoration-none">Forgot Password?</a>
+                    <a href="forgot_password.php" class="text-decoration-none">Forgot Password?</a>
                 </div>
                 
                 <!-- Submit Button -->

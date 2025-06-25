@@ -96,7 +96,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sub_admin') {
       <!-- partial -->
       <div class="container-fluid page-body-wrapper">
         <!-- partial:partials/_sidebar.html -->
-        <nav class="sidebar sidebar-offcanvas" id="sidebar">
+         <nav class="sidebar sidebar-offcanvas" id="sidebar">
   <ul class="nav">
      <li class="nav-item">
       <a class="nav-link"  href="admin_dashboard.php" >
@@ -157,7 +157,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'sub_admin') {
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link"  href="about_portal.php" >
+      <a class="nav-link"  href="admin_about_portal.php" >
         <i class="icon-grid menu-icon"></i>
         <span class="menu-title">About Portal</span>
         
